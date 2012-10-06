@@ -1,0 +1,13 @@
+name: MultiPack
+version: 1.0.1
+description: Enables Per-Region texture packs via WorldGuard and now Per-World!
+authors: [nala3]
+
+main: net.worldoftomorrow.nala.mp.MultiPack
+database: false
+depend: [WorldGuard]
+
+commands:
+    multipack:
+        description: The base multipack command
+        usage: /multipack <add|remove|set|reload> <world> <region> <url>
