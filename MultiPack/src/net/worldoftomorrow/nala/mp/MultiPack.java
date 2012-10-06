@@ -68,9 +68,11 @@ public class MultiPack extends JavaPlugin implements Listener {
 	private Logger log;
 	private Metrics metrics;
 	protected Util util;
-
-	private String no_mod_perm = "You do not have permission to set the texture pack for that region!";
-	private String already_set = "There is already a pack defined for that region!";
+	private static final String NOPERMS = ChatColor.RED + "You do not have permission to perform this action.";
+	private static final String ALREADYSET = ChatColor.RED + "There is already a pack defined for that region!";
+	private static final String NOEXIST = ChatColor.RED + "That region does not exist!";
+	private static final String NOTSET = ChatColor.RED + "No texture pack has been set for that region.";
+	private static final String BADSYNTAX = ChatColor.RED + "Invalid command syntax.";
 
 	@Override
 	public void onEnable() {
@@ -117,10 +119,10 @@ public class MultiPack extends JavaPlugin implements Listener {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
 				if(region == null) {
-					sender.sendMessage(ChatColor.RED + "That region does not exist!");
+					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
-					sender.sendMessage(ChatColor.RED + this.no_mod_perm);
+					sender.sendMessage(NOPERMS);
 					return true;
 				}
 
@@ -133,24 +135,23 @@ public class MultiPack extends JavaPlugin implements Listener {
 							+ "Texture pack for the region \"" + args[2] + "\" has been set.");
 					return true;
 				} else {
-					sender.sendMessage(ChatColor.RED + this.already_set);
+					sender.sendMessage(ALREADYSET);
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("rm") && args.length == 3) {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
 				if(region == null) {
-					sender.sendMessage(ChatColor.RED + "That region does not exist!");
+					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
-					sender.sendMessage(ChatColor.RED + this.no_mod_perm);
+					sender.sendMessage(NOPERMS);
 					return true;
 				}
 
 				String path = "Packs." + args[1] + "." + args[2];
 				if (!config.isSet(path)) {
-					sender.sendMessage(ChatColor.RED
-							+ "There is no pack set for that region.");
+					sender.sendMessage(NOTSET);
 					return true;
 				}
 
@@ -163,10 +164,10 @@ public class MultiPack extends JavaPlugin implements Listener {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
 				if(region == null) {
-					sender.sendMessage(ChatColor.RED + "That region does not exist!");
+					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
-					sender.sendMessage(ChatColor.RED + this.no_mod_perm);
+					sender.sendMessage(NOPERMS);
 					return true;
 				}
 				String path = "Packs." + args[1] + "." + args[2] + ".url";
@@ -184,7 +185,8 @@ public class MultiPack extends JavaPlugin implements Listener {
 					sender.sendMessage(ChatColor.BLUE
 							+ "Texture packs reloaded.");
 				} else {
-					sender.sendMessage(ChatColor.RED + "You do not have permission to perform this command.");
+					sender.sendMessage(NOPERMS);
+					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("default") && args.length > 2) {
 				if (!(sender instanceof Player) || sender.isOp()
@@ -204,13 +206,12 @@ public class MultiPack extends JavaPlugin implements Listener {
 						this.loadTexturePacks(true);
 						return true;
 					} else {
-						sender.sendMessage(ChatColor.RED
-								+ "Invalid command syntax!");
+						sender.sendMessage(BADSYNTAX);
 						return true;
 					}
 				}
 			} else {
-				sender.sendMessage(ChatColor.RED + "Invalid command syntax.");
+				sender.sendMessage(BADSYNTAX);
 				return true;
 			}
 		} else {
