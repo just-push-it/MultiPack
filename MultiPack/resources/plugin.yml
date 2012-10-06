@@ -1,5 +1,5 @@
 name: MultiPack
-version: 1.0.1
+version: ${project.version}-${BUILD_NUMBER}
 description: Enables Per-Region texture packs via WorldGuard and now Per-World!
 authors: [nala3]
 
