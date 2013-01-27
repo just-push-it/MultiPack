@@ -1,9 +1,9 @@
 name: MultiPack
 version: ${project.version}-${BUILD_NUMBER}
-description: Enables Per-Region texture packs via WorldGuard and now Per-World!
+description: Allowes setting of a texture pack in WorldGuard regions, or a world.
 authors: [nala3]
 
-main: net.worldoftomorrow.nala.mp.MultiPack
+main: net.worldoftomorrow.MultiPack.MultiPack
 database: false
 depend: [WorldGuard]
 

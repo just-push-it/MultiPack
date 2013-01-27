@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-package net.worldoftomorrow.nala.mp;
+package net.worldoftomorrow.MultiPack;
 
 public class TexturePack {
 

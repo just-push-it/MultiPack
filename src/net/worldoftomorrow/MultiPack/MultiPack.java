@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
  */
 
-package net.worldoftomorrow.nala.mp;
+package net.worldoftomorrow.MultiPack;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,8 +99,7 @@ public class MultiPack extends JavaPlugin implements Listener {
 				e.printStackTrace();
 			}
 		}
-		Plugin wg = Bukkit.getServer().getPluginManager()
-				.getPlugin("WorldGuard");
+		Plugin wg = Bukkit.getServer().getPluginManager().getPlugin("WorldGuard");
 		if (wg == null || !(wg instanceof WorldGuardPlugin) || !wg.isEnabled()) {
 			log.severe("Worldguard not found! Disabling.");
 			this.getPluginLoader().disablePlugin(this);
@@ -111,14 +110,13 @@ public class MultiPack extends JavaPlugin implements Listener {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length > 0) {
 			FileConfiguration config = this.getConfig();
 			if (args[0].equalsIgnoreCase("add") && args.length == 4) {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
-				if(region == null) {
+				if (region == null) {
 					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
@@ -131,8 +129,7 @@ public class MultiPack extends JavaPlugin implements Listener {
 					this.getConfig().set(path + ".url", args[3]);
 					this.saveConfig();
 					this.loadTexturePacks(true);
-					sender.sendMessage(ChatColor.BLUE
-							+ "Texture pack for the region \"" + args[2] + "\" has been set.");
+					sender.sendMessage(ChatColor.BLUE + "Texture pack for the region \"" + args[2] + "\" has been set.");
 					return true;
 				} else {
 					sender.sendMessage(ALREADYSET);
@@ -141,7 +138,7 @@ public class MultiPack extends JavaPlugin implements Listener {
 			} else if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("rm") && args.length == 3) {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
-				if(region == null) {
+				if (region == null) {
 					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
@@ -163,7 +160,7 @@ public class MultiPack extends JavaPlugin implements Listener {
 			} else if (args[0].equalsIgnoreCase("set") && args.length == 4) {
 				World world = this.getServer().getWorld(args[1]);
 				ProtectedRegion region = wg.getRegionManager(world).getRegion(args[2]);
-				if(region == null) {
+				if (region == null) {
 					sender.sendMessage(NOEXIST);
 					return true;
 				} else if (!this.hasPermission(sender, region)) {
@@ -174,32 +171,25 @@ public class MultiPack extends JavaPlugin implements Listener {
 				this.getConfig().set(path, args[3]);
 				this.saveConfig();
 				this.loadTexturePacks(true);
-				sender.sendMessage(ChatColor.BLUE
-						+ "Texture pack for the region \"" + args[2]
-						+ "\" has been set.");
+				sender.sendMessage(ChatColor.BLUE + "Texture pack for the region \"" + args[2] + "\" has been set.");
 				return true;
 			} else if (args[0].equalsIgnoreCase("reload") && args.length == 1) {
-				if (!(sender instanceof Player) || sender.isOp()
-						|| sender.hasPermission("multipack.reload")) {
+				if (!(sender instanceof Player) || sender.isOp() || sender.hasPermission("multipack.reload")) {
 					this.loadTexturePacks(true);
-					sender.sendMessage(ChatColor.BLUE
-							+ "Texture packs reloaded.");
+					sender.sendMessage(ChatColor.BLUE + "Texture packs reloaded.");
 				} else {
 					sender.sendMessage(NOPERMS);
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("default") && args.length > 2) {
-				if (!(sender instanceof Player) || sender.isOp()
-						|| sender.hasPermission("multipack.default")) {
-					if ((args[1].equalsIgnoreCase("add") || args[1]
-							.equalsIgnoreCase("set")) && args.length == 4) {
+				if (!(sender instanceof Player) || sender.isOp() || sender.hasPermission("multipack.default")) {
+					if ((args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("set")) && args.length == 4) {
 						String path = "Defaults." + args[2];
 						this.getConfig().set(path, args[3]);
 						this.saveConfig();
 						this.loadTexturePacks(true);
 						return true;
-					} else if (args[1].equalsIgnoreCase("remove")
-							&& args.length == 3) {
+					} else if (args[1].equalsIgnoreCase("remove") && args.length == 3) {
 						String path = "Defaults." + args[2];
 						this.getConfig().set(path, null);
 						this.saveConfig();
@@ -215,28 +205,25 @@ public class MultiPack extends JavaPlugin implements Listener {
 				return true;
 			}
 		} else {
-			sender.sendMessage(ChatColor.BLUE
-					+ "This server is running MultiPack version: "
+			sender.sendMessage(ChatColor.BLUE + "This server is running MultiPack version: "
 					+ this.getDescription().getVersion());
 		}
 		return true;
 	}
 
 	private boolean hasPermission(CommandSender sender, ProtectedRegion region) {
-		if(!(sender instanceof Player)) {
+		if (!(sender instanceof Player)) {
 			return true;
 		} else {
 			BukkitPlayer lp = new BukkitPlayer(wg, (Player) sender);
-			return (region.isOwner(lp)
-					|| sender.isOp()
-					|| sender.hasPermission("worldguard.region.texture.regions." + region.getId()));
+			return (region.isOwner(lp) || sender.isOp() || sender.hasPermission("worldguard.region.texture." + region.getId()));
 		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerMove(PlayerMoveEvent event) {
-		if (event.isCancelled() || (this.texturePacks.isEmpty() && this.defaultPacks.isEmpty()))
-			return; // Don't do anything if it is cancelled or no packs loaded
+		// Don't do anything if it is cancelled or no packs loaded.
+		if (event.isCancelled() || (this.texturePacks.isEmpty() && this.defaultPacks.isEmpty())) return;
 		Player p = event.getPlayer();
 		RegionManager rm = this.wg.getRegionManager(p.getWorld());
 		TexturePack pack = util.getHighestPriorityPack(rm, p);
@@ -256,34 +243,30 @@ public class MultiPack extends JavaPlugin implements Listener {
 		this.playerCurrent.put(p.getName(), null);
 		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new JoinTask(this, p), 20);
 	}
-	
+
 	@EventHandler
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player p = event.getPlayer();
 		RegionManager rm = this.wg.getRegionManager(p.getWorld());
 		TexturePack pack = util.getHighestPriorityPack(rm, p);
-		if(pack == null)
+		if (pack == null)
 			util.setDefaultPack(p, true);
 		else
 			util.setTexturePack(p, pack);
 	}
-	
+
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		this.playerCurrent.remove(event.getPlayer().getName());
 	}
 
 	private void loadTexturePacks(boolean reload) {
-		if (reload)
-			this.reloadConfig();
-		if (!this.getConfig().isSet("Packs"))
-			return;
-		Map<String, Object> worlds = this.getConfig()
-				.getConfigurationSection("Packs").getValues(false);
+		if (reload) this.reloadConfig();
+		if (!this.getConfig().isSet("Packs")) return;
+		Map<String, Object> worlds = this.getConfig().getConfigurationSection("Packs").getValues(false);
 		this.texturePacks.clear();
 		for (String world : worlds.keySet()) {
-			Map<String, Object> regions = this.getConfig()
-					.getConfigurationSection("Packs")
+			Map<String, Object> regions = this.getConfig().getConfigurationSection("Packs")
 					.getConfigurationSection(world).getValues(false);
 			ArrayList<TexturePack> packs = new ArrayList<TexturePack>();
 			for (String region : regions.keySet()) {
@@ -294,10 +277,8 @@ public class MultiPack extends JavaPlugin implements Listener {
 			this.texturePacks.put(world, packs);
 		}
 
-		if (!this.getConfig().isSet("Defaults"))
-			return;
-		ConfigurationSection defaults = this.getConfig()
-				.getConfigurationSection("Defaults");
+		if (!this.getConfig().isSet("Defaults")) return;
+		ConfigurationSection defaults = this.getConfig().getConfigurationSection("Defaults");
 		for (String key : defaults.getKeys(false)) {
 			String url = defaults.getString(key);
 			this.defaultPacks.put(key, url);

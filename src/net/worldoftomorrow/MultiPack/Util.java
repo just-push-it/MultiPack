@@ -1,13 +1,10 @@
-package net.worldoftomorrow.nala.mp;
+package net.worldoftomorrow.MultiPack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Packet250CustomPayload;
+import net.minecraft.server.v1_4_R1.MinecraftServer;
 
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
@@ -16,61 +13,55 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 public class Util {
 	private final MultiPack plugin;
-	
+
 	protected Util(MultiPack plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	/**
 	 * Set the players texture pack to the given texture pack
+	 * 
 	 * @param Player
 	 * @param TexturePack
 	 */
 	protected void setTexturePack(Player p, TexturePack pack) {
-		if (plugin.playerCurrent.get(p.getName()) == pack)
-			return;
-		Packet250CustomPayload packet = new Packet250CustomPayload("MC|TPack",
-				(pack.getUrl() + "\0" + 16).getBytes());
-		this.getEntityPlayer(p).netServerHandler.sendPacket(packet);
+		if (plugin.playerCurrent.get(p.getName()) == pack) return;
+		p.setTexturePack(pack.getUrl());
 		plugin.playerCurrent.put(p.getName(), pack);
 	}
-	
+
 	/**
 	 * Set the players texture pack to the default one.
+	 * 
 	 * @param Player
 	 */
 	protected void setDefaultPack(Player p, boolean force) {
 		TexturePack current = plugin.playerCurrent.get(p.getName());
 		String defurl = MinecraftServer.getServer().getTexturePack();
-		if (current == null && !force)
-			return;
+		if (current == null && !force) return;
 
-		Packet250CustomPayload packet;
 		if (plugin.defaultPacks.containsKey(p.getWorld().getName())) {
-			String url = plugin.defaultPacks.get(p.getWorld().getName());
-			packet = new Packet250CustomPayload("MC|TPack", (url + "\0" + 16).getBytes());
+			p.setTexturePack(plugin.defaultPacks.get(p.getWorld().getName()));
 		} else if (defurl.equals("") || defurl == null) {
-			packet = new Packet250CustomPayload("MC|TPack", ("https://dl.dropbox.com/u/52707344/default.zip" + "\0" + 16).getBytes());
+			p.setTexturePack("https://dl.dropbox.com/u/52707344/default.zip");
 		} else {
-			packet = new Packet250CustomPayload("MC|TPack", (defurl + "\0" + 16).getBytes());
+			p.setTexturePack(defurl);
 		}
-		this.getEntityPlayer(p).netServerHandler.sendPacket(packet);
 		plugin.playerCurrent.put(p.getName(), null);
 	}
-	
+
 	/**
 	 * Get the texture pack for the highest priority region the player is in.
+	 * 
 	 * @param RegionManager
 	 * @param Player
 	 * @return Highest Priority Pack
 	 */
-	
+
 	protected TexturePack getHighestPriorityPack(RegionManager rm, Player p) {
 		TexturePack tp = null;
-		if (!plugin.texturePacks.containsKey(p.getWorld().getName()))
-			return null;
-		ArrayList<TexturePack> worldPacks = plugin.texturePacks.get(p.getWorld()
-				.getName());
+		if (!plugin.texturePacks.containsKey(p.getWorld().getName())) return null;
+		ArrayList<TexturePack> worldPacks = plugin.texturePacks.get(p.getWorld().getName());
 		if (worldPacks == null || worldPacks.isEmpty()) {
 			return null;
 		}
@@ -81,19 +72,15 @@ public class Util {
 		for (ProtectedRegion region : set) {
 			for (TexturePack pack : regionPacks) {
 				ProtectedRegion packRegion = rm.getRegion(pack.getRegion());
-				if (packRegion == null)
-					continue;
-				if (tp == null)
-					tp = pack;
-				if (region.getPriority() < packRegion.getPriority())
-					tp = pack;
+				if (packRegion == null) continue;
+				if (tp == null) tp = pack;
+				if (region.getPriority() < packRegion.getPriority()) tp = pack;
 			}
 		}
 		return tp;
 	}
 
-	private List<TexturePack> getAplicablePacks(ApplicableRegionSet set,
-			ArrayList<TexturePack> worldPacks) {
+	private List<TexturePack> getAplicablePacks(ApplicableRegionSet set, ArrayList<TexturePack> worldPacks) {
 		List<TexturePack> packs = new ArrayList<TexturePack>();
 		for (ProtectedRegion region : set) {
 			for (TexturePack pack : worldPacks) {
@@ -103,9 +90,5 @@ public class Util {
 			}
 		}
 		return packs;
-	}
-
-	private EntityPlayer getEntityPlayer(Player p) {
-		return ((CraftPlayer) p).getHandle();
 	}
 }
