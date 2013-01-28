@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>MultiPack</groupId>
 	<artifactId>MultiPack</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<name>MultiPack</name>
 	<description>Lets a server have a per-region (WorldGuard) and world texture packs</description>
 	<repositories>
