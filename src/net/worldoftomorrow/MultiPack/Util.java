@@ -67,7 +67,7 @@ public class Util {
 		}
 
 		ApplicableRegionSet set = rm.getApplicableRegions(p.getLocation());
-		List<TexturePack> regionPacks = this.getAplicablePacks(set, worldPacks);
+		List<TexturePack> regionPacks = this.getApplicablePacks(set, worldPacks);
 
 		for (ProtectedRegion region : set) {
 			for (TexturePack pack : regionPacks) {
@@ -80,7 +80,7 @@ public class Util {
 		return tp;
 	}
 
-	private List<TexturePack> getAplicablePacks(ApplicableRegionSet set, ArrayList<TexturePack> worldPacks) {
+	private List<TexturePack> getApplicablePacks(ApplicableRegionSet set, ArrayList<TexturePack> worldPacks) {
 		List<TexturePack> packs = new ArrayList<TexturePack>();
 		for (ProtectedRegion region : set) {
 			for (TexturePack pack : worldPacks) {
